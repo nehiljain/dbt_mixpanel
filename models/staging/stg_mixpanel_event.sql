@@ -2,10 +2,10 @@
 
 with events as (
 
-    select * 
+    select *
     from {{ var('event_table' )}}
 
-    where time > {{ "'" ~ var('date_range_start',  '2010-01-01') ~ "'" }} 
+    where time > {{ "'" ~ var('date_range_start',  '2010-01-01') ~ "'" }}
 
 ),
 
@@ -36,7 +36,7 @@ fields as (
         screen_width,
         screen_height,
         os,
-        distinct_id_before_identity as people_id_before_identified
+        -- distinct_id_before_identity as people_id_before_identified
 
         {%- if var('has_web_events', true) -%}
         ,
@@ -82,8 +82,8 @@ fields as (
         brand as device_brand,
         has_telephone as has_telephone,
         screen_dpi as screen_pixel_density,
-        google_play_services as google_play_service_status,
-        bluetooth_enabled as has_bluetooth_enabled
+        google_play_services as google_play_service_status
+        -- bluetooth_enabled as has_bluetooth_enabled
         {%- endif %}
 
         -- custom properties as specified in your dbt_project.yml
@@ -91,20 +91,20 @@ fields as (
         ,
         {{ column }}
         {%- endfor %}
-        
+
     from dedupe
     where nth_event_record = 1
 )
 
 -- de-duplicate - the PK will be insert_id + occurred_at
--- may want to move this to mixpanel_event? 
+-- may want to move this to mixpanel_event?
 {# deduped as ( #}
 
-    {# select * 
+    {# select *
     from fields
 
-    {%- set groupby_n = 14 + var('has_web_events', true) * 10 + var('has_ios_events', true) * 1 + 
-        var('has_android_events', true) * 7 + (var('has_android_events', true) or var('has_ios_events', true)) * 9 + 
+    {%- set groupby_n = 14 + var('has_web_events', true) * 10 + var('has_ios_events', true) * 1 +
+        var('has_android_events', true) * 7 + (var('has_android_events', true) or var('has_ios_events', true)) * 9 +
         var('event_custom_columns', [])|length %}
 
     {{ dbt_utils.group_by(groupby_n) }} #}

@@ -1,19 +1,19 @@
 version: 2
 
-sources: 
+sources:
   - name: mixpanel
     database: "{{ var('mixpanel_database', target.database)}}" # add var config to dbt_project.yml
     schema: "{{ var('mixpanel_schema', target.schema)}}" # replace target with 'mixpanel' before releasing
 
     loader: fivetran
     loaded_at_field: _fivetran_synced
-      
+
     freshness:
       warn_after: {count: 72, period: hour}
       error_after: {count: 96, period: hour}
 
     tables:
-      - name: src_mixpanel_dupe_events # replace with 'event' before releasing
+      - name: event # replace with 'event' before releasing
         description: Table of all events tracked by Mixpanel
 
         columns:
@@ -42,35 +42,35 @@ sources:
               JSON capturing properties specific to this type of event. Properties specified in the `event_properties`
               variable will be turned into columns in the `mixpanel_event` model.
 
-          - name: insert_id 
-            description: > 
-              Random 16 character string of alphanumeric characters that is unique to an event. 
+          - name: insert_id
+            description: >
+              Random 16 character string of alphanumeric characters that is unique to an event.
               Used to de-duplicate data.
             tests:
               - not_null
-          
+
           - name: mp_processing_time_ms
             description: >
               Time in milliseconds in Unix Processing Time in which the event was ingested by Mixpanel.
-          
-          - name: screen_width 
+
+          - name: screen_width
             description: Width of the device screen in pixels (web or android) or points (ios).
 
           - name: screen_height
             description: The height of the device screen in pixels (web or android) or points (ios).
 
           - name: city
-            description: > 
+            description: >
               The city of the event sender, as parsed from the IP property or the Latitude and Longitude properties.
-            
+
           - name: mp_country_code
             description: >
-              The country code of the event sender, as parsed from the IP property or the Latitude and Longitude 
+              The country code of the event sender, as parsed from the IP property or the Latitude and Longitude
               properties.
 
           - name: region
-            description: > 
-              The region (state or province) of the event sender, as parsed from the IP property or the Latitude and 
+            description: >
+              The region (state or province) of the event sender, as parsed from the IP property or the Latitude and
               Longitude properties.
 
           - name: os
@@ -81,12 +81,12 @@ sources:
 
           - name: device_id
             description: >
-              A unique string that identifies a user before an authentication or identification flow. 
+              A unique string that identifies a user before an authentication or identification flow.
               By default, Mixpanel creates a device_id for every unique browser/device.
 
           - name: distinct_id_before_identity
-            description: > 
-              When an event comes in with a distinct_id that has been remapped to something 
+            description: >
+              When an event comes in with a distinct_id that has been remapped to something
               else, this property contains the original value to aid debugging and error solution.
 
           # web only
@@ -116,8 +116,8 @@ sources:
 
           - name: mp_keyword
             description: >
-              Search keywords detected on the referrer from a search engine to your domain. 
-              This property is only collected when search keywords are included in a URL. 
+              Search keywords detected on the referrer from a search engine to your domain.
+              This property is only collected when search keywords are included in a URL.
 
           - name: device
             description: The name of the event sender's device, if they're on mobile web.
@@ -128,9 +128,9 @@ sources:
 
           - name: wifi
             description: >
-              Boolean that is true if the event user’s device has an active, available Wifi connection, 
+              Boolean that is true if the event user’s device has an active, available Wifi connection,
               and false if not.
-          
+
           - name: os_version
             description: Current version of iOS or Android on the device.
 
@@ -151,14 +151,14 @@ sources:
 
           - name: ae_session_length
             description: >
-              The length of the user's mobile app session. This is captured as a property of 
-              the default App Session mobile event tracked by mixpanel (triggers after > 10 seconds 
+              The length of the user's mobile app session. This is captured as a property of
+              the default App Session mobile event tracked by mixpanel (triggers after > 10 seconds
               in the app).
 
           # ios only
           - name: radio
-            description: > 
-              The current cellular network communication standard type (3G, 4G, LTE, etc.) of the device 
+            description: >
+              The current cellular network communication standard type (3G, 4G, LTE, etc.) of the device
               that produced the event.
 
           # android-only default properties
@@ -182,6 +182,5 @@ sources:
 
           - name: google_play_services
             description: >
-              Verifies that Google Play services is installed and enabled on this device, 
+              Verifies that Google Play services is installed and enabled on this device,
               and that the version installed on this device is no older than the one required by this client.
-                  
